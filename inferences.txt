@@ -1,0 +1,6 @@
+So looking at the data we can see that we have all hashes being completely unique to one another but some of the intermediary sha254
+results are added which can only mean that the function call that created the intermediary results has some noise into it
+
+Using brute force neural networks negates anypossibility of actually acquiring the function call]
+
+Each of the result is made up of two floating decimal places: yet to find any relationship between that
