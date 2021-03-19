@@ -4,3 +4,6 @@ results are added which can only mean that the function call that created the in
 Using brute force neural networks negates anypossibility of actually acquiring the function call]
 
 Each of the result is made up of two floating decimal places: yet to find any relationship between that
+
+Grouped the data into a duplicated dataset based on the column of the result since it was repeated and doing research ojn LSTM and MLP 
+to see if they can find the relationship based on the two since prior research as already been carried out on the same
