@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[19]:
+# In[46]:
 
 
 # This Python 3 environment comes with many helpful analytics libraries installed
@@ -23,7 +23,7 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 # You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
 
 
-# In[20]:
+# In[47]:
 
 
 import numpy as np
@@ -37,20 +37,20 @@ from torch.autograd import Variable
 from scipy.sparse import *
 
 
-# In[21]:
+# In[48]:
 
 
 #readintg the dataset
 df = pd.read_csv("../input/hash-code-dataset/100k.csv")
 
 
-# In[22]:
+# In[49]:
 
 
 df.head()
 
 
-# In[23]:
+# In[50]:
 
 
 #since the hashing yields an intermediate result we can see if that result is repeated anywhere and use that to train our data if so
@@ -59,14 +59,14 @@ print("The number of unique hashes is: ",df['hash'].nunique())
 print("The number of actual elements in the df[result] column is: ",df['result'].count())
 
 
-# In[24]:
+# In[51]:
 
 
 #finding the missing values in the dataset and sorting them in order
 df.isnull().sum().sort_values(ascending = False)
 
 
-# In[25]:
+# In[52]:
 
 
 #creating an additional column thatgets the length of each hash to see whether there is a correlation with the results column in the future
@@ -74,14 +74,14 @@ df['hash_length'] = df['hash'].str.len()
 df.head()
 
 
-# In[26]:
+# In[53]:
 
 
 #break down each of the hashed strings to see the components but for now let me just look at one
 print(df['hash'][0])
 
 
-# In[27]:
+# In[54]:
 
 
 #from what we saw earlier we found out that there are a bunch of values that are duplicated in the results column
@@ -89,13 +89,13 @@ print(df['hash'][0])
 duplicate = df[df.duplicated('result')]
 
 
-# In[28]:
+# In[55]:
 
 
 print(duplicate)
 
 
-# In[29]:
+# In[56]:
 
 
 #from what we have in the duplicated we get a concept of what is called collission which is 
@@ -114,7 +114,7 @@ To decipher this we have to start with what is a sha256 algos it is typically a 
 64 characters strings"""
 
 
-# In[30]:
+# In[57]:
 
 
 # I want to sample a few hashes and see what they contain ehn they are broken down
@@ -125,7 +125,7 @@ print("This is the third hundredth hashed output: ",df['hash'][300])
 print("This is the 77th hashed output: ",df['hash'][77])
 
 
-# In[31]:
+# In[58]:
 
 
 #count columns for the hexadecimals
@@ -183,13 +183,13 @@ for i in df['hash']:
 print(len(five_count))
 
 
-# In[33]:
+# In[59]:
 
 
 df['zeros_count'] = pd.DataFrame (zeros_count)
 
 
-# In[ ]:
+# In[60]:
 
 
 df['ones_count'] = pd.DataFrame (ones_count)
@@ -209,8 +209,43 @@ df['e_count'] = pd.DataFrame (e_count)
 df['f_count'] = pd.DataFrame (f_count)
 
 
-# In[18]:
+# In[61]:
 
 
 df.head()
+
+
+# In[62]:
+
+
+print(df['three_count'].shape)
+print(df['hash'].shape)
+
+
+# this ascertaines that the new columns and the has are of the same shapd and dimensionality
+
+# In[63]:
+
+
+#not to lose the data that is in the hex column I would rather convert the column into an int that is workable
+#with our model rather than converting it into a label encoded thing
+hash_signed_int = []
+def signed_int(h):
+    x = int(h, 16)
+    return x
+for i in df['hash']:
+    a = signed_int(i)
+    hash_signed_int.append(a)
+
+
+# In[64]:
+
+
+df['hash_signed_int'] = pd.DataFrame (hash_signed_int)
+
+
+# In[65]:
+
+
+df.dtypes
 
