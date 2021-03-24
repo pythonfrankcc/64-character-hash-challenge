@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[46]:
+# In[101]:
 
 
 # This Python 3 environment comes with many helpful analytics libraries installed
@@ -23,7 +23,7 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 # You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
 
 
-# In[47]:
+# In[102]:
 
 
 import numpy as np
@@ -37,20 +37,20 @@ from torch.autograd import Variable
 from scipy.sparse import *
 
 
-# In[48]:
+# In[103]:
 
 
 #readintg the dataset
 df = pd.read_csv("../input/hash-code-dataset/100k.csv")
 
 
-# In[49]:
+# In[104]:
 
 
 df.head()
 
 
-# In[50]:
+# In[105]:
 
 
 #since the hashing yields an intermediate result we can see if that result is repeated anywhere and use that to train our data if so
@@ -59,14 +59,14 @@ print("The number of unique hashes is: ",df['hash'].nunique())
 print("The number of actual elements in the df[result] column is: ",df['result'].count())
 
 
-# In[51]:
+# In[106]:
 
 
 #finding the missing values in the dataset and sorting them in order
 df.isnull().sum().sort_values(ascending = False)
 
 
-# In[52]:
+# In[107]:
 
 
 #creating an additional column thatgets the length of each hash to see whether there is a correlation with the results column in the future
@@ -74,14 +74,14 @@ df['hash_length'] = df['hash'].str.len()
 df.head()
 
 
-# In[53]:
+# In[108]:
 
 
 #break down each of the hashed strings to see the components but for now let me just look at one
 print(df['hash'][0])
 
 
-# In[54]:
+# In[109]:
 
 
 #from what we saw earlier we found out that there are a bunch of values that are duplicated in the results column
@@ -89,13 +89,13 @@ print(df['hash'][0])
 duplicate = df[df.duplicated('result')]
 
 
-# In[55]:
+# In[110]:
 
 
 print(duplicate)
 
 
-# In[56]:
+# In[111]:
 
 
 #from what we have in the duplicated we get a concept of what is called collission which is 
@@ -114,7 +114,7 @@ To decipher this we have to start with what is a sha256 algos it is typically a 
 64 characters strings"""
 
 
-# In[57]:
+# In[112]:
 
 
 # I want to sample a few hashes and see what they contain ehn they are broken down
@@ -125,7 +125,7 @@ print("This is the third hundredth hashed output: ",df['hash'][300])
 print("This is the 77th hashed output: ",df['hash'][77])
 
 
-# In[58]:
+# In[113]:
 
 
 #count columns for the hexadecimals
@@ -183,13 +183,13 @@ for i in df['hash']:
 print(len(five_count))
 
 
-# In[59]:
+# In[114]:
 
 
 df['zeros_count'] = pd.DataFrame (zeros_count)
 
 
-# In[60]:
+# In[115]:
 
 
 df['ones_count'] = pd.DataFrame (ones_count)
@@ -209,13 +209,13 @@ df['e_count'] = pd.DataFrame (e_count)
 df['f_count'] = pd.DataFrame (f_count)
 
 
-# In[61]:
+# In[116]:
 
 
 df.head()
 
 
-# In[62]:
+# In[117]:
 
 
 print(df['three_count'].shape)
@@ -224,11 +224,20 @@ print(df['hash'].shape)
 
 # this ascertaines that the new columns and the has are of the same shapd and dimensionality
 
-# In[63]:
+# #### not to lose the data that is in the hex column I would rather convert the column into an int that is workable
+# #with our model rather than converting it into a label encoded thing
+# hash_signed_int = []
+# def signed_int64(h):
+#     x = int(h, 16)
+#     return x
+# for i in df['hash']:
+#     a = signed_int(i)
+#     hash_signed_int.append(a)
+
+# In[118]:
 
 
-#not to lose the data that is in the hex column I would rather convert the column into an int that is workable
-#with our model rather than converting it into a label encoded thing
+#from numpy import int64
 hash_signed_int = []
 def signed_int(h):
     x = int(h, 16)
@@ -237,15 +246,33 @@ for i in df['hash']:
     a = signed_int(i)
     hash_signed_int.append(a)
 
-
-# In[64]:
-
-
-df['hash_signed_int'] = pd.DataFrame (hash_signed_int)
+df['hash_signed_int'] = pd.DataFrame(hash_signed_int)
 
 
-# In[65]:
+# In[119]:
 
 
-df.dtypes
+import sys
+p = [sys.maxsize]
+print(p)
+#this would show that our hex is too large to be converted to an int without an overflow
+
+
+# In[120]:
+
+
+#with the failure of the interger data type to hold our data we can use the float but with the risk of losing precision
+df['hash_signed_int'] = pd.to_numeric(df['hash_signed_int'])
+
+
+# In[121]:
+
+
+df.head()
+
+
+# In[ ]:
+
+
+#the next part of this is correlation and feature engineering
 
